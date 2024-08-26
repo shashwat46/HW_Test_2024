@@ -44,23 +44,23 @@ public class GameDataManager : MonoBehaviour
             string jsonText = request.downloadHandler.text;
             gameData = JsonUtility.FromJson<GameData>(jsonText);
 
-            // Apply data to DoofusController
+      
             DoofusController doofusController = FindObjectOfType<DoofusController>();
             if (doofusController != null)
             {
-                doofusController.speed = gameData.player_data.speed; // Corrected this line
+                doofusController.speed = gameData.player_data.speed; 
             }
 
-            // Apply data for PulpitManager
-            PulpitManager pulpitManager = FindObjectOfType<PulpitManager>(); // Corrected this line
+     
+            PulpitManager pulpitManager = FindObjectOfType<PulpitManager>(); 
             if (pulpitManager != null)
             {
-                pulpitManager.minPulpitDestroyTime = gameData.pulpit_data.minPulpitDestroyTime; // Corrected this line
-                pulpitManager.maxPulpitDestroyTime = gameData.pulpit_data.maxPulpitDestroyTime; // Corrected this line
-                pulpitManager.pulpitSpawnTime = gameData.pulpit_data.pulpitSpawnTime; // Corrected this line and added the semicolon
+                pulpitManager.minPulpitDestroyTime = gameData.pulpit_data.minPulpitDestroyTime;
+                pulpitManager.maxPulpitDestroyTime = gameData.pulpit_data.maxPulpitDestroyTime; 
+                pulpitManager.pulpitSpawnTime = gameData.pulpit_data.pulpitSpawnTime; 
             }
 
-            // Log the data to verify
+            
             Debug.Log($"Speed: {gameData.player_data.speed}");
             Debug.Log($"Min Pulpit Destroy Time: {gameData.pulpit_data.minPulpitDestroyTime}");
             Debug.Log($"Max Pulpit Destroy Time: {gameData.pulpit_data.maxPulpitDestroyTime}");

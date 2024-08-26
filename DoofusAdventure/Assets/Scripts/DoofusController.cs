@@ -4,8 +4,8 @@ public class DoofusController : MonoBehaviour
 {
     public float speed = 5f;
     public float smoothTime = 0.1f;
-    public float raycastDistance = 1.1f; // Increased to ensure detection
-    public LayerMask pulpitLayer; // Add this line
+    public float raycastDistance = 1.1f; 
+    public LayerMask pulpitLayer; 
 
     private Rigidbody rb;
     private Vector3 currentVelocity = Vector3.zero;
@@ -24,7 +24,7 @@ public class DoofusController : MonoBehaviour
 
         Vector3 targetVelocity = new Vector3(moveHorizontal, 0.0f, moveVertical).normalized * speed;
 
-        // Remove the IsValidMovement check to allow free movement
+       
         Vector3 smoothVelocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref currentVelocity, smoothTime);
         rb.velocity = new Vector3(smoothVelocity.x, rb.velocity.y, smoothVelocity.z);
 
