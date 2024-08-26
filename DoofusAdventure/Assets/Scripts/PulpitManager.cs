@@ -70,6 +70,14 @@ public class PulpitManager : MonoBehaviour
         lastPulpitPosition = position;
 
         float destroyTime = Random.Range(minPulpitDestroyTime, maxPulpitDestroyTime);
+        
+        PulpitTimer timer = pulpit.GetComponent<PulpitTimer>();
+        if (timer == null)
+        {
+            timer = pulpit.AddComponent<PulpitTimer>();
+        }
+        timer.Initialize(destroyTime);
+
         StartCoroutine(RemovePulpitAfterTime(pulpit, destroyTime));
     }
 
