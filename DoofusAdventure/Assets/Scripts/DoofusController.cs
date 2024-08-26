@@ -1,39 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DoofusController : MonoBehaviour
 {
-    public float speed = 3f;       // Speed of Doofus
-    public float smoothTime = 0.1f; // Time to smooth out the velocity
+    public float speed = 5f;
+    public float smoothTime = 0.1f;
+    public float raycastDistance = 1.1f; // Increased to ensure detection
+    public LayerMask pulpitLayer; // Add this line
+
     private Rigidbody rb;
     private Vector3 currentVelocity = Vector3.zero;
 
     void Start()
     {
-        // Get the Rigidbody component attached to the GameObject
         rb = GetComponent<Rigidbody>();
-
-        // Debug log to check initial speed value
+        rb.freezeRotation = true;
         Debug.Log($"Initial Speed: {speed}");
     }
 
     void FixedUpdate()
     {
-        // Get input for movement
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
-        // Create a target velocity based on input
-        Vector3 targetVelocity = new Vector3(moveHorizontal, 0.0f, moveVertical) * speed;
+        Vector3 targetVelocity = new Vector3(moveHorizontal, 0.0f, moveVertical).normalized * speed;
 
-        // Smoothly interpolate between the current velocity and the target velocity
+        // Remove the IsValidMovement check to allow free movement
         Vector3 smoothVelocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref currentVelocity, smoothTime);
+        rb.velocity = new Vector3(smoothVelocity.x, rb.velocity.y, smoothVelocity.z);
 
-        // Set the Rigidbody's velocity
-        rb.velocity = smoothVelocity;
+        if (!IsOnPulpit())
+        {
+            rb.AddForce(Vector3.down, ForceMode.Acceleration);
+        }
 
-        // Debug log to check speed value during runtime
         Debug.Log($"Speed: {speed}, Velocity: {rb.velocity}");
+    }
+
+    bool IsOnPulpit()
+    {
+        return Physics.Raycast(transform.position, Vector3.down, raycastDistance, pulpitLayer);
     }
 }
