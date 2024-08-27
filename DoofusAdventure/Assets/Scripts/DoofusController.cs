@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class DoofusController : MonoBehaviour
 {
-    public float speed = 5f;
+    public float speed = 9f;
     public float smoothTime = 0.1f;
     public float raycastDistance = 1.1f;
     public LayerMask pulpitLayer;
@@ -15,18 +15,30 @@ public class DoofusController : MonoBehaviour
 
     public float initialHeight = 100f;
 
-    void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
-
+        if (rb != null)
+        {
+            rb.freezeRotation = true;
+        }
+        else
+        {
+            Debug.LogError("Rigidbody component not found on DoofusController GameObject!");
+        }
+    }
+    public void DoofusStartGame()
+    {
         transform.position = new Vector3(0, initialHeight + 1f, 0);
+
+        isGameOver = false;
     }
 
-    void FixedUpdate()
+    public void FixedUpdate()
     {
-        if (isGameOver) return;
 
+        if (isGameOver || rb == null) return;
+       
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
@@ -55,10 +67,7 @@ public class DoofusController : MonoBehaviour
     void GameOver()
     {
         isGameOver = true;
-        Debug.Log("Game Over!");
-        // You can add more game over logic here, like showing a UI panel
-        // For now, we'll just reload the scene after a short delay
-        Invoke("ReloadScene", 0.1f);
+        GameManager.Instance.GameOver();
     }
 
     void ReloadScene()
@@ -68,8 +77,6 @@ public class DoofusController : MonoBehaviour
 
     public void OnNewPulpitReached()
     {
-        // This method will be called by the PulpitManager when a new pulpit is reached
-        Debug.Log("New pulpit reached!");
         ScoreManager.Instance.IncrementPulpitCount();
     }
 }

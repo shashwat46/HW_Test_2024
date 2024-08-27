@@ -15,7 +15,7 @@ public class PulpitManager : MonoBehaviour
     private Vector3 lastPulpitPosition;
     private DoofusController doofusController;
 
-    private void Start()
+   public void StartGame()
     {
         doofusController = FindObjectOfType<DoofusController>();
         if (doofusController == null)
@@ -24,8 +24,18 @@ public class PulpitManager : MonoBehaviour
         }
 
         // Spawn initial pulpit at the specified height
+        ClearAllPulpits();
         SpawnInitialPulpit();
         StartCoroutine(PulpitSpawnRoutine());
+    }
+
+    private void ClearAllPulpits()
+    {
+        foreach (GameObject pulpit in activePulpits)
+        {
+            Destroy(pulpit);
+        }
+        activePulpits.Clear();
     }
 
     private void SpawnInitialPulpit()
@@ -80,14 +90,14 @@ public class PulpitManager : MonoBehaviour
     {
         if (pulpitPrefab == null)
         {
-            Debug.LogError("Pulpit prefab is not assigned!");
+           
             return;
         }
 
         GameObject pulpit = Instantiate(pulpitPrefab, position, Quaternion.identity);
         if (pulpit == null)
         {
-            Debug.LogError("Failed to instantiate pulpit!");
+          
             return;
         }
 

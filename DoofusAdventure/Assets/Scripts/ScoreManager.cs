@@ -42,4 +42,16 @@ public class ScoreManager : MonoBehaviour
             scoreText.text = "Score: " + currentScore;
         }
     }
+
+    public void ResetScore()
+    {
+        currentScore = 0;
+        pulpitCount = 0;
+        UpdateScoreDisplay();
+    }
+
+    public int GetScore()
+    {
+        return currentScore;
+    }
 }
