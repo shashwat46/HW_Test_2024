@@ -1,6 +1,7 @@
 # Doofus Adventure Game
 
 ## Table of Contents
+## Shashwat Singh 21BCI0357
 
 -   [Introduction](#introduction)
 -   [Features](#features)
@@ -22,6 +23,7 @@
 
 ## Introduction
 
+This Game was created as a part of the HitWicket Recruitment Drive 2024. Creator  - Shashwat Singh 21BCI0357
 Welcome to **Doofus Adventure Game**, an engaging and challenging game where you guide Doofus, a curious cube, across disappearing platforms called Pulpits. Your goal is to help Doofus walk on as many Pulpits as possible without falling. This game is designed to test your reflexes and strategic thinking as you navigate the ever-changing environment.
 
 ## Features
