@@ -9,19 +9,28 @@ public class PulpitManager : MonoBehaviour
     public float maxPulpitDestroyTime = 5f;
     public float pulpitSpawnTime = 2.5f;
     public float platformSize = 9f;
+    public float initialHeight = 100f; // New variable for initial height
 
     private List<GameObject> activePulpits = new List<GameObject>();
     private Vector3 lastPulpitPosition;
+    private DoofusController doofusController;
 
     private void Start()
     {
+        doofusController = FindObjectOfType<DoofusController>();
+        if (doofusController == null)
+        {
+            Debug.LogError("DoofusController not found in the scene!");
+        }
+
+        // Spawn initial pulpit at the specified height
         SpawnInitialPulpit();
         StartCoroutine(PulpitSpawnRoutine());
     }
 
     private void SpawnInitialPulpit()
     {
-        Vector3 initialPosition = Vector3.zero;
+        Vector3 initialPosition = new Vector3(0, initialHeight, 0);
         SpawnPulpit(initialPosition);
     }
 
@@ -41,10 +50,10 @@ public class PulpitManager : MonoBehaviour
     {
         Vector3[] possiblePositions = new Vector3[]
         {
-            lastPulpitPosition + Vector3.right * platformSize,
-            lastPulpitPosition + Vector3.left * platformSize,
-            lastPulpitPosition + Vector3.forward * platformSize,
-            lastPulpitPosition + Vector3.back * platformSize
+            lastPulpitPosition + new Vector3(platformSize, 0, 0),
+            lastPulpitPosition + new Vector3(-platformSize, 0, 0),
+            lastPulpitPosition + new Vector3(0, 0, platformSize),
+            lastPulpitPosition + new Vector3(0, 0, -platformSize)
         };
 
         List<Vector3> validPositions = new List<Vector3>();
@@ -61,11 +70,27 @@ public class PulpitManager : MonoBehaviour
             int randomIndex = Random.Range(0, validPositions.Count);
             SpawnPulpit(validPositions[randomIndex]);
         }
+        else
+        {
+            Debug.LogWarning("No valid positions to spawn new pulpit!");
+        }
     }
 
     private void SpawnPulpit(Vector3 position)
     {
+        if (pulpitPrefab == null)
+        {
+            Debug.LogError("Pulpit prefab is not assigned!");
+            return;
+        }
+
         GameObject pulpit = Instantiate(pulpitPrefab, position, Quaternion.identity);
+        if (pulpit == null)
+        {
+            Debug.LogError("Failed to instantiate pulpit!");
+            return;
+        }
+
         activePulpits.Add(pulpit);
         lastPulpitPosition = position;
 
@@ -75,10 +100,24 @@ public class PulpitManager : MonoBehaviour
         if (timer == null)
         {
             timer = pulpit.AddComponent<PulpitTimer>();
+            if (timer == null)
+            {
+                Debug.LogError("Failed to add PulpitTimer component!");
+                return;
+            }
         }
         timer.Initialize(destroyTime);
 
         StartCoroutine(RemovePulpitAfterTime(pulpit, destroyTime));
+
+        if (doofusController != null)
+        {
+            doofusController.OnNewPulpitReached();
+        }
+        else
+        {
+            Debug.LogWarning("DoofusController is null when trying to notify of new pulpit!");
+        }
     }
 
     private IEnumerator RemovePulpitAfterTime(GameObject pulpit, float time)
@@ -88,6 +127,22 @@ public class PulpitManager : MonoBehaviour
         {
             activePulpits.Remove(pulpit);
             Destroy(pulpit);
+
+            // Update the score when a pulpit is destroyed
+            if (ScoreManager.Instance != null)
+            {
+                ScoreManager.Instance.UpdateScore();
+            }
+            else
+            {
+                Debug.LogWarning("ScoreManager instance is null!");
+            }
+
+            // If this was the last pulpit, spawn a new one
+            if (activePulpits.Count == 0)
+            {
+                SpawnAdjacentPulpit();
+            }
         }
     }
 
